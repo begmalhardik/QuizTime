@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">QuizTime</string>
+    <string name="app_name_title">SIT305 Quiz App</string>
+    <string name="enter_your_name">Enter your name:</string>
+    <string name="name">Name</string>
+    <string name="start">START</string>
 </resources>
