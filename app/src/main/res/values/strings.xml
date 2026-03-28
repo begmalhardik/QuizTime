@@ -4,4 +4,14 @@
     <string name="enter_your_name">Enter your name:</string>
     <string name="name">Name</string>
     <string name="start">START</string>
+    <string name="progress_text">1/5</string>
+    <string name="android_question_title">Android question title:</string>
+    <string name="question_details_go_here">Question details go here...</string>
+    <string name="answer">Answer</string>
+    <string name="next">Next</string>
+    <string name="congratulations_user">Congratulations, your name!</string>
+    <string name="your_score">YOUR SCORE:</string>
+    <string name="score_value">4/5</string>
+    <string name="take_new_quiz">Take New Quiz</string>
+    <string name="finish">Finish</string>
 </resources>
