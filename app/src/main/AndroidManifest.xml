@@ -13,6 +13,7 @@
         android:theme="@style/Theme.QuizTime">
         <activity
             android:name=".ui.MainActivity"
+            android:theme="@style/Theme.QuizTime"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

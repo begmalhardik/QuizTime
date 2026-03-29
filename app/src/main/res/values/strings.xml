@@ -14,4 +14,5 @@
     <string name="score_value">4/5</string>
     <string name="take_new_quiz">Take New Quiz</string>
     <string name="finish">Finish</string>
+    <string name="request_user_name">Please enter your name</string>
 </resources>

@@ -1,4 +1,6 @@
 package com.example.quiztime.ui;
 
-public class QuizFragment {
+import androidx.fragment.app.Fragment;
+
+public class QuizFragment extends Fragment {
 }
