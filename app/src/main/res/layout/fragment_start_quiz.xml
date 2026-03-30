@@ -72,7 +72,7 @@
         android:padding="12dp"
         android:layout_marginHorizontal="40dp"
         android:backgroundTint="@null"
-        android:background="@drawable/option_wrong_bg"
+        android:background="@drawable/next_button_bg"
         android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

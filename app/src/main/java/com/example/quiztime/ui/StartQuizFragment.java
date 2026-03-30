@@ -1,7 +1,8 @@
 package com.example.quiztime.ui;
 
-import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,22 @@ public class StartQuizFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        binding.etName.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!(s.toString().isEmpty()) || !(s.toString().isBlank())) {
+                    binding.tvNameError.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
         binding.btnStart.setOnClickListener(c -> {
 
             String name = binding.etName.getText().toString().trim();
@@ -38,8 +55,6 @@ public class StartQuizFragment extends Fragment {
                 // binding.etName.setError("PLease enter your name");
                 binding.tvNameError.setVisibility(View.VISIBLE);
                 return;
-            } else {
-                binding.tvNameError.setVisibility(View.GONE);
             }
 
             // Pass name to next fragment
