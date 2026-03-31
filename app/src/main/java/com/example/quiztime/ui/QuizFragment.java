@@ -9,9 +9,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.quiztime.R;
 import com.example.quiztime.databinding.FragmentQuizBinding;
 import com.example.quiztime.model.Question;
+import com.example.quiztime.viewmodel.QuizViewModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,14 +23,7 @@ import java.util.List;
 public class QuizFragment extends Fragment {
 
     private FragmentQuizBinding binding;
-
-    private List<Question> questionList;
-    private int currentIndex = 0;
-
-    private int selectedAnswer = -1;
-    private boolean isAnswered = false;
-    private int score = 0;
-
+    private QuizViewModel viewModel;
     private Button[] optionButtons;
 
     @Nullable
@@ -45,153 +42,95 @@ public class QuizFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        viewModel = new ViewModelProvider(requireActivity()).get(QuizViewModel.class);
+
         optionButtons = new Button[]{
                 binding.btnOption1,
                 binding.btnOption2,
                 binding.btnOption3,
                 binding.btnOption4
         };
-
-        loadQuestions();
-        loadQuestion();
-
-        setupOptionClicks();
-        setupSubmitNextButton();
+        
+        observeViewModel();
+        setupClicks();
     }
 
-    // Loading Static Questions
-    private void loadQuestions() {
-        questionList = new ArrayList<>();
+    private void observeViewModel() {
 
-        questionList.add(new Question(
-                "What is Android?",
-                Arrays.asList("Language", "IDE", "Database", "OS"),
-                3
-        ));
+        viewModel.getCurrentQuestion().observe(getViewLifecycleOwner(), q -> {
 
-        questionList.add(new Question(
-                "Which language is used for Android?",
-                Arrays.asList("Java", "Kotlin", "Both", "Python"),
-                2
-        ));
+            binding.tvQuestionDesc.setText(q.getQuestion());
 
-        questionList.add(new Question(
-                "What is Activity?",
-                Arrays.asList("UI Screen", "Database", "API", "Service"),
-                0
-        ));
+            for (int i = 0; i < optionButtons.length; i++) {
+                optionButtons[i].setText(q.getOptions().get(i));
+                optionButtons[i].setBackgroundResource(R.drawable.option_default_bg);
+                optionButtons[i].setEnabled(true);
+            }
 
-        questionList.add(new Question(
-                "Android is based on?",
-                Arrays.asList("Windows", "Linux", "Mac", "Unix"),
-                1
-        ));
+            binding.btnNext.setText(R.string.submit);
 
-        questionList.add(new Question(
-                "Which is Jetpack?",
-                Arrays.asList("Library", "OS", "Device", "Language"),
-                0
-        ));
+            updateProgress();
+        });
+
+        viewModel.getIsAnswered().observe(getViewLifecycleOwner(), answered -> {
+
+            if (answered) {
+
+                int correct = viewModel.getCorrectAnswer();
+                int selected = viewModel.getSelectedAnswer();
+
+                for (Button btn : optionButtons) {
+                    btn.setEnabled(false);
+                }
+
+                optionButtons[correct].setBackgroundResource(R.drawable.option_correct_bg);
+
+                if (selected != correct) {
+                    optionButtons[selected].setBackgroundResource(R.drawable.option_wrong_bg);
+                }
+
+                binding.btnNext.setText(R.string.next);
+            }
+        });
+
+        viewModel.isQuizFinished().observe(getViewLifecycleOwner(), finished -> {
+            if (finished) navigateToResult();
+        });
     }
 
-    // Load Question
-    private void loadQuestion() {
-        Question q = questionList.get(currentIndex);
-
-        binding.tvQuestionDesc.setText(q.getQuestion());
-
+    private void setupClicks() {
         for (int i = 0; i < optionButtons.length; i++) {
-            optionButtons[i].setText(q.getOptions().get(i));
-            optionButtons[i].setBackgroundResource(R.drawable.option_default_bg);
-            optionButtons[i].setEnabled(true);
+            int index = i;
+
+            optionButtons[i].setOnClickListener(v -> {
+                viewModel.selectAnswer(index);
+
+                resetOptions();
+                optionButtons[index].setBackgroundResource(R.drawable.next_button_bg);
+            });
         }
 
-        selectedAnswer = -1;
-        isAnswered = false;
+        binding.btnNext.setOnClickListener(v -> {
 
-        binding.btnNext.setText(R.string.submit);
-
-        updateProgress();
+            if (!Boolean.TRUE.equals(viewModel.getIsAnswered().getValue())) {
+                viewModel.submitAnswer();
+            } else {
+                viewModel.nextQuestion();
+            }
+        });
     }
 
     // Progress bar
     private void updateProgress() {
 
-        int total = questionList.size();
-        int progress = (currentIndex + 1) * 100 / total;
+        int index = viewModel.getQuestionIndex().getValue();
+        int total = viewModel.getTotalQuestions();
+        int progress = (index + 1) * 100 / total;
 
         binding.progressBar.setProgress(progress);
-        binding.tvProgressText.setText((currentIndex + 1) + "/" + total);
+        binding.tvProgressText.setText((index + 1) + "/" + total);
     }
 
-    // Option Clicks
-    private void setupOptionClicks() {
-        for (int i = 0; i < optionButtons.length; i++) {
-            int index = i;
-            optionButtons[i].setOnClickListener(v -> {
-                if (!isAnswered) {
-                    selectedAnswer = index;
-
-                    // highlight selection
-                    resetOptions();
-                    optionButtons[index].setBackground(getResources().getDrawable(R.drawable.next_button_bg));
-                }
-            });
-        }
-    }
-
-    // submit / next button
-    private void setupSubmitNextButton() {
-
-        binding.btnNext.setOnClickListener(v -> {
-
-            if (!isAnswered) {
-                checkAnswer();
-            } else {
-                goToNextQuestion();
-            }
-        });
-    }
-
-    private void checkAnswer() {
-
-        if (selectedAnswer == -1) {
-            Toast.makeText(getContext(), "Please select an option", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        isAnswered = true;
-
-        Question q = questionList.get(currentIndex);
-        int correct = q.getCorrectAnswerIndex();
-
-        // Disable buttons
-        for (Button btn : optionButtons) {
-            btn.setEnabled(false);
-        }
-
-        if (selectedAnswer == correct) {
-            optionButtons[correct].setBackgroundResource(R.drawable.option_correct_bg);
-            score++;
-        } else {
-            optionButtons[selectedAnswer].setBackgroundResource(R.drawable.option_wrong_bg);
-            optionButtons[correct].setBackgroundResource(R.drawable.option_correct_bg);
-        }
-
-        binding.btnNext.setText(R.string.next);
-    }
-
-    // Next Question
-    private void goToNextQuestion() {
-
-        if (currentIndex < questionList.size() - 1) {
-            currentIndex++;
-            loadQuestion();
-        } else {
-            // Go to Result Screen
-            navigateToResult();
-        }
-    }
 
     // Navigating to Result screen
     private void navigateToResult() {
@@ -199,8 +138,8 @@ public class QuizFragment extends Fragment {
         ResultFragment fragment = new ResultFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putInt("SCORE", score);
-        bundle.putInt("TOTAL", questionList.size());
+        bundle.putInt("SCORE", viewModel.getScore().getValue());
+        bundle.putInt("TOTAL", viewModel.getTotalQuestions());
 
         fragment.setArguments(bundle);
 
