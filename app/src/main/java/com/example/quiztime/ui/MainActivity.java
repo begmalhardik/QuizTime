@@ -21,6 +21,10 @@ import com.example.quiztime.databinding.ActivityMainBinding;
     refactor(data): clean repository layer
     fix(encryption): resolve key generation bug
     docs: update security architecture
+
+    we need to work on result screen
+    basic app testing
+    refactoring code
 */
 
 public class MainActivity extends AppCompatActivity {
