@@ -1,4 +1,4 @@
-package com.example.quiztime.ui;
+package com.example.quiztime.view;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,11 +9,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.quiztime.databinding.FragmentStartQuizBinding;
+import com.example.quiztime.viewmodel.QuizViewModel;
 
 public class StartQuizFragment extends Fragment {
 
     private FragmentStartQuizBinding binding;
+
+    private QuizViewModel viewModel;
 
     @Nullable
     @Override
@@ -30,6 +35,14 @@ public class StartQuizFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(requireActivity()).get(QuizViewModel.class);
+
+        viewModel.getUserName().observe(getViewLifecycleOwner(), name -> {
+            if (name != null && !name.isEmpty()) {
+                binding.etName.setText(name);
+            }
+        });
 
         binding.etName.addTextChangedListener(new TextWatcher() {
 
@@ -58,11 +71,8 @@ public class StartQuizFragment extends Fragment {
             }
 
             // Pass name to next fragment
-            Bundle bundle = new Bundle();
-            bundle.putString("USER_NAME", name);
-
+            viewModel.setUserName(name);
             QuizFragment quizFragment = new QuizFragment();
-            quizFragment.setArguments(bundle);
 
             ((MainActivity) requireActivity()).loadFragment(quizFragment);
         });

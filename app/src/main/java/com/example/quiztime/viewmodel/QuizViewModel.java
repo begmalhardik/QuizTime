@@ -18,6 +18,8 @@ public class QuizViewModel extends ViewModel {
     private final MutableLiveData<Integer> selectedAnswer = new MutableLiveData<>();
     private final MutableLiveData<Boolean> quizFinished = new MutableLiveData<>();
 
+    private final MutableLiveData<String> userName = new MutableLiveData<>();
+
     private List<Question> questionList;
 
     public QuizViewModel() {
@@ -39,6 +41,14 @@ public class QuizViewModel extends ViewModel {
         currentQuestion.setValue(questionList.get(index));
         isAnswered.setValue(false);
         selectedAnswer.setValue(-1);
+    }
+
+    public void setUserName(String name) {
+        userName.setValue(name);
+    }
+
+    public LiveData<String> getUserName() {
+        return userName;
     }
 
     public LiveData<Question> getCurrentQuestion() {
@@ -101,6 +111,16 @@ public class QuizViewModel extends ViewModel {
         } else {
             quizFinished.setValue(true);
         }
+    }
+
+    public void resetQuiz() {
+        questionIndex.setValue(0);
+        score.setValue(0);
+        isAnswered.setValue(false);
+        selectedAnswer.setValue(-1);
+        quizFinished.setValue(false);
+
+        loadQuestion();
     }
 
 }
