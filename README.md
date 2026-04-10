@@ -95,8 +95,17 @@ Result Screen
 ## 📸 Screens
 
 * Start Screen
+<img src="https://github.com/user-attachments/assets/0e915ef8-1b40-4d82-8c88-499cde9be30d" width="300" height="auto">
+<img src="https://github.com/user-attachments/assets/0f983cf6-4929-43cd-89a1-76e29f17407f" width="300" height="auto">
+
 * Quiz Screen
+<img src="https://github.com/user-attachments/assets/83d01098-a0e6-4cbf-afdc-2fe9b728cf50" width="300" height="auto">
+<img src="https://github.com/user-attachments/assets/bea1a2de-1763-45f9-b734-70cb3747d717" width="300" height="auto">
+<img src="https://github.com/user-attachments/assets/14c34e14-597b-4784-bc19-eb123d95bde7" width="300" height="auto">
+
 * Result Screen
+<img src="https://github.com/user-attachments/assets/8212dc32-eafc-4be7-8f65-92311e25e418" width="300" height="auto">
+<img src="https://github.com/user-attachments/assets/97b22b68-64a7-4f15-8be5-63b7e4ea8b6e" width="300" height="auto">
 
 ---
 
